@@ -1,0 +1,89 @@
+{
+    "licenses": [
+        {
+            "name": "",
+            "id": 0,
+            "url": ""
+        }
+    ],
+    "info": {
+        "contributor": "",
+        "date_created": "",
+        "description": "",
+        "url": "",
+        "version": "",
+        "year": ""
+    },
+    "categories": [
+        {
+            "id": 1,
+            "name": "object",
+            "supercategory": ""
+        },
+        {
+            "id": 2,
+            "name": "nonstandard",
+            "supercategory": ""
+        }
+    ],
+    "images": [
+        {
+            "id": 1,
+            "width": 1868,
+            "height": 1868,
+            "file_name": "20180824-16-42-23-516.jpg",
+            "license": 0,
+            "flickr_url": "",
+            "coco_url": "",
+            "date_captured": 0
+        },
+        {
+            "id": 200,
+            "width": 1836,
+            "height": 1836,
+            "file_name": "20181025-16-11-09-191.jpg",
+            "license": 0,
+            "flickr_url": "",
+            "coco_url": "",
+            "date_captured": 0
+        }
+    ],
+    "annotations": [
+        {
+            "id": 1,
+            "image_id": 1,
+            "category_id": 1,
+            "segmentation": [],
+            "area": 74783.64900000003,
+            "bbox": [
+                1120.56,
+                927.04,
+                247.71,
+                301.9
+            ],
+            "iscrowd": 0,
+            "attributes": {
+                "occluded": false,
+                "rotation": 0.0
+            }
+        },
+        {
+            "id": 2482,
+            "image_id": 200,
+            "category_id": 1,
+            "segmentation": [],
+            "area": 45101.55539999999,
+            "bbox": [
+                774.05,
+                1339.9,
+                209.22,
+                215.57
+            ],
+            "iscrowd": 0,
+            "attributes": {
+                "occluded": false,
+                "rotation": 0.0
+            }
+        }
+    ]
+}

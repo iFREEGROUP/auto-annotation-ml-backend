@@ -1,0 +1,30 @@
+[package]
+name = "label-studio-ml-backend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.32.0", features = ["full"] }
+serde = { version = "1.0.162", features = ["derive"] }
+anyhow = "1.0.71"
+thiserror = "1.0.44"
+candle-nn = {version = "0.3.1"}
+image = "0.24.0"
+imageproc = "0.23.0"
+reqwest = { version = "0.11.22", features = ["json"] }
+config = "0.13.1"
+clap = { version = "4.4.8", features = ["derive"] }
+serde_json = "1.0.108"
+
+[dependencies.candle-core]
+version = "0.3.1"
+# git = "ssh://git@github.com/huggingface/candle.git"
+# branch = "main"
+optional = true
+
+[features]
+default = ["candle"]
+candle = ["candle-core"]
+cuda = ["candle-core/cuda"]
