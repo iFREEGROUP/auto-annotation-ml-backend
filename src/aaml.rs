@@ -1,10 +1,10 @@
 use candle_core::Result;
-use image::{ DynamicImage, imageops };
+use image::DynamicImage;
 
 use crate::{
     yolo::{ inference::{ Inference, Which }, object_detection::{ Bbox, KeyPoint } },
     config::Settings,
-    model::coco::{ CoCoAnnotations, Category, Image, Annotation, self },
+    model::coco::Annotation,
 };
 
 #[derive(Debug)]
@@ -28,6 +28,8 @@ impl AutoAnnotation {
         &self,
         mut anid: u64,
         image_id: u64,
+        width: u64,
+        height: u64,
         predictions: Vec<Vec<Bbox<Vec<KeyPoint>>>>
     ) -> Vec<Annotation> {
         //default coco
@@ -37,12 +39,33 @@ impl AutoAnnotation {
         for (index, bboxs) in predictions.iter().enumerate() {
             let label_index = index + 1;
 
+            let (initial_h, initial_w) = (height, width);
+            let (width, height) = {
+                let w = width as usize;
+                let h = height as usize;
+                if w < h {
+                    let w = (w * 640) / h;
+                    // Sizes have to be divisible by 32.
+                    ((w / 32) * 32, 640)
+                } else {
+                    let h = (h * 640) / w;
+                    (640, (h / 32) * 32)
+                }
+            };
+            let w_ratio = (initial_w as f32) / (width as f32);
+            let h_ratio = (initial_h as f32) / (height as f32);
+
             for bbox in bboxs {
                 let annotation = Annotation {
                     id: anid,
                     image_id,
                     category_id: label_index as i64,
-                    bbox: vec![bbox.xmin, bbox.ymin, bbox.xmax - bbox.xmin, bbox.ymax - bbox.ymin], //[x,y,w,h]
+                    bbox: vec![
+                        bbox.xmin * w_ratio,
+                        bbox.ymin * h_ratio,
+                        (bbox.xmax - bbox.xmin) * w_ratio,
+                        (bbox.ymax - bbox.ymin) * h_ratio
+                    ], //[x,y,w,h]
                     ..Default::default()
                 };
                 annotations.push(annotation);

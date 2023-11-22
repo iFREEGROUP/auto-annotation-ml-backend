@@ -1,5 +1,7 @@
-use std::{ path::PathBuf, fs };
+use std::{ path::PathBuf, fs, thread::sleep, time::Duration };
 use clap::{ Parser, ValueEnum };
+use tqdm::{tqdm, Iter};
+use glob::glob;
 
 use crate::{
     config::Settings,
@@ -50,22 +52,29 @@ impl Cli {
         );
         let aaml = AutoAnnotation::new(settings)?;
         let anid = 0;
-        for (index, entry) in fs::read_dir(self.dataset.as_path())?.enumerate() {
+        let mut entries = fs::read_dir(self.dataset.as_path())?;
+
+        for index in (0..).take(fs::read_dir(self.dataset.as_path())?.count()).tqdm() {
+            let entry = entries.next().unwrap();
+        // }
+        // for (index, entry) in tqdm(entries.into_iter()).enumerate() {
             let path = entry?.path();
             // dbg!(&path);
             if path.is_file() && path.extension() == Some("jpg".as_ref()) {
                 let image = image::open(path.as_path())?;
                 let filename = path.file_name().unwrap().to_str().unwrap().to_string();
                 let image_id = index + 1;
+                let org_width = image.width() as u64;
+                let org_height = image.height() as u64;
                 coco.add_image(Image {
                     id: image_id as i64,
-                    width: image.width() as i64,
-                    height: image.height() as i64,
+                    width: org_width as i64,
+                    height: org_height as i64,
                     file_name: filename,
                     ..Default::default()
                 });
                 let predictions = aaml.predict(&image)?;
-                let annotations = aaml.post_process(anid, image_id as u64, predictions);
+                let annotations = aaml.post_process(anid, image_id as u64,org_width,org_height, predictions);
                 coco.add_annotations(annotations);
             }
         }

@@ -1,6 +1,8 @@
+use std::fs;
+
 use clap::Parser;
-use config::{ Config };
-use label_studio_ml_backend::{ config::Settings, cli::Cli };
+use config::Config;
+use aaml::{ config::Settings, cli::Cli };
 
 #[tokio::main]
 async fn main() {
@@ -28,8 +30,8 @@ async fn main() {
     match coco {
         Ok(data) => {
             
-            let js = serde_json::to_string(&data).unwrap();
-            println!("{}", js);
+            let contents = serde_json::to_string(&data).unwrap();
+            fs::write("instances_default.json", contents.as_bytes()).unwrap();
         }
         Err(e) => eprintln!("{:?}", e),
     }

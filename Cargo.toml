@@ -1,5 +1,5 @@
 [package]
-name = "label-studio-ml-backend"
+name = "aaml"
 version = "0.1.0"
 edition = "2021"
 
@@ -17,6 +17,8 @@ reqwest = { version = "0.11.22", features = ["json"] }
 config = "0.13.1"
 clap = { version = "4.4.8", features = ["derive"] }
 serde_json = "1.0.108"
+tqdm = "0.6.0"
+glob = "0.3.1"
 
 [dependencies.candle-core]
 version = "0.3.1"
