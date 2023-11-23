@@ -15,7 +15,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: Jimver/cuda-toolkit@v0.2.11
+      id: cuda-toolkit
+      with:
+        cuda: '12.2.0'
     - name: Build
       run: cargo build 
     - name: Run tests
@@ -25,7 +28,8 @@ jobs:
       with:
         profile: minimal
         toolchain: stable
-    - name: Build release
+
+    - name: Build CPU release
       run: |
             RUNNER_ALLOW_RUNASROOT=1 sudo apt-get install pkg-config musl-tools
             rustup target add x86_64-unknown-linux-musl
@@ -42,7 +46,7 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Upload Release Asset
+    - name: Upload CPU Version Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,5 +54,22 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
 
         asset_path: ./target/x86_64-unknown-linux-musl/release/aaml
-        asset_name: aaml
+        asset_name: aaml-cpu
+        asset_content_type: application/octet-stream
+
+    - name: Build GPU release
+      run: |
+            RUNNER_ALLOW_RUNASROOT=1 sudo apt-get install pkg-config musl-tools
+            rustup target add x86_64-unknown-linux-musl
+            cargo build -r --target x86_64-unknown-linux-musl --features cuda
+
+    - name: Upload GPU Version Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+        asset_path: ./target/x86_64-unknown-linux-musl/release/aaml
+        asset_name: aaml-gpu
         asset_content_type: application/octet-stream
