@@ -1,7 +1,6 @@
-use std::{ path::PathBuf, fs, thread::sleep, time::Duration };
+use std::{ path::PathBuf, fs};
 use clap::{ Parser, ValueEnum };
-use tqdm::{tqdm, Iter};
-use glob::glob;
+use tqdm::Iter;
 
 use crate::{
     config::Settings,
@@ -40,7 +39,7 @@ impl Cli {
         }
         let mut coco = CoCoAnnotations { ..Default::default() };
         coco.set_categories(
-            settings.labels
+            settings.yolo.labels
                 .iter()
                 .enumerate()
                 .map(|(index, v)| Category {

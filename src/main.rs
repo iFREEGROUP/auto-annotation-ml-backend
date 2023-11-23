@@ -23,7 +23,7 @@ async fn main() {
     };
 
     if let Some(labels) = &cli.labels {
-        settings.labels = labels.to_vec();
+        settings.yolo.labels = labels.to_vec();
     }
 
     let coco = cli.run(settings).await;

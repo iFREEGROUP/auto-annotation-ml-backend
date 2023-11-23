@@ -2,22 +2,29 @@ use candle_core::Result;
 use image::DynamicImage;
 
 use crate::{
-    yolo::{ inference::{ Inference, Which }, object_detection::{ Bbox, KeyPoint } },
+    yolo::{ inference::Inference, object_detection::{ Bbox, KeyPoint } },
     config::Settings,
     model::coco::Annotation,
 };
 
 #[derive(Debug)]
 pub struct AutoAnnotation {
-    config: Settings,
     infer: Inference,
 }
 
 impl AutoAnnotation {
     pub fn new(config: Settings) -> Result<Self> {
-        let infer = Inference::load(&config.model_path, Which::M, config.labels.len())?;
+        let confidence_threshold = config.yolo.confidence_threshold;
+        let nms_threshold = config.yolo.nms_threshold;
+        let infer = Inference::load(
+            &config.yolo.model_path,
+            config.yolo.weight_size.into(),
+            confidence_threshold,
+            nms_threshold,
+            config.yolo.labels.len()
+        )?;
 
-        Ok(Self { config, infer })
+        Ok(Self {infer })
     }
 
     pub fn predict(&self, original_image: &DynamicImage) -> Result<Vec<Vec<Bbox<Vec<KeyPoint>>>>> {

@@ -16,9 +16,37 @@ pub enum Which {
     X,
 }
 
+impl From<String> for Which {
+    fn from(value: String) -> Self {
+        match value.as_str() {
+            "n" => Self::N,
+            "s" => Self::S,
+            "m" => Self::M,
+            "l" => Self::L,
+            "x" => Self::X,
+            _ => Self::S
+        }
+    }
+}
+
+impl From<&str> for Which {
+    fn from(value: &str) -> Self {
+        match value {
+            "n" => Self::N,
+            "s" => Self::S,
+            "m" => Self::M,
+            "l" => Self::L,
+            "x" => Self::X,
+            _ => Self::S
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Inference {
     model: YoloV8,
+    confidence_threshold:f32,
+    nms_threshold:f32,
 }
 
 
@@ -26,6 +54,8 @@ impl Inference {
     pub fn load<S: AsRef<Path>>(
         model_file: S,
         weight_size: Which,
+        confidence_threshold:f32,
+        nms_threshold:f32,
         num_classes: usize
     ) -> candle_core::Result<Self> {
         let multiples = match weight_size {
@@ -44,7 +74,7 @@ impl Inference {
         let vb = unsafe { VarBuilder::from_mmaped_safetensors(&[model_file], DType::F32, &device)? };
         let model = YoloV8::load(vb, multiples, num_classes)?;
         Ok(Self {
-            model,
+            model,confidence_threshold,nms_threshold
         })
     }
 
@@ -56,9 +86,10 @@ impl Inference {
         //     .decode()
         //     .map_err(candle_core::Error::wrap)?;
         let device = if cfg!(feature = "cuda") { Device::new_cuda(0)? } else { Device::Cpu };
-        
-        let confidence_threshold = 0.25f32;
-        let nms_threshold = 0.45f32;
+        // let confidence_threshold = 0.25f32;
+        // let nms_threshold = 0.4f32;
+        let confidence_threshold = self.confidence_threshold;
+        let nms_threshold = self.nms_threshold;
         let image_t = {
             let (width, height) = {
                 let w = original_image.width() as usize;
