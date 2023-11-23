@@ -8,7 +8,7 @@ use crate::{
     model::coco::{ CoCoAnnotations, Image, Category },
 };
 
-#[derive(Parser)]
+#[derive(Parser,Debug,Clone)]
 #[command(name = "aaml-cli")]
 #[command(version = "1.0")]
 #[command(about = "Auto annotation ml cli", long_about = None)]
