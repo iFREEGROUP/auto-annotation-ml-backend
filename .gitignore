@@ -19,5 +19,4 @@ Cargo.lock
 /target
 
 *.safetensors
-default.toml
 *.json

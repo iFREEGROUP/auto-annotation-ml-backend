@@ -24,7 +24,7 @@ struct MemorySource<F: Format> {
 
 impl MemorySource<FileFormat> {
     pub fn new() -> Self {
-        let contents = include_str!("../default.toml");
+        let contents = include_str!("../example_config.toml");
         Self {
             content: contents.to_string(),
             format: FileFormat::Toml,
@@ -50,7 +50,7 @@ impl Settings {
     pub fn new(config_file: Option<String>) -> Result<Self, ConfigError> {
         let config_builder = Config::builder()
             .add_source(MemorySource::new())
-            .add_source(config::File::with_name("default"))
+            .add_source(config::File::with_name("aaml"))
             .add_source(config::Environment::with_prefix("APP"));
 
         if let Some(config_file) = config_file {

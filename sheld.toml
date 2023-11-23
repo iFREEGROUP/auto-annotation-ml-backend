@@ -1,0 +1,8 @@
+cvat_host = "http://172.16.10.188:8080"
+device = "cpu"
+[yolo]
+model_path = "sheld.safetensors"
+weight_size = "m"
+labels = ["empty", "object"]
+confidence_threshold = 0.25
+nms_threshold = 0.4
