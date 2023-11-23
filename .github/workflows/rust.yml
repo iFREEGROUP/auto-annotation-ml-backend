@@ -3,7 +3,7 @@ name: Rust
 on:
   push:
     branches: 
-      - main
+      # - main
       - release/*
   pull_request:
     branches: [ "main" ]
@@ -12,21 +12,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-  build-ubuntu:
+  build_ubuntu:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -46,15 +32,15 @@ jobs:
             cargo build -r --target x86_64-unknown-linux-musl
             
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+      uses: Shopify/upload-to-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        name: ubuntu-cpu-aaml
+        path: ./target/x86_64-unknown-linux-musl/release/aaml
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        content-type: application/octet-stream
 
-        asset_path: ./target/x86_64-unknown-linux-musl/release/aaml
-        asset_name: ubuntu-cpu-aaml
-        asset_content_type: application/octet-stream
   
   build-windows:
     runs-on: windows-latest
@@ -73,11 +59,12 @@ jobs:
       run: |
           cargo build -r
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+      uses: Shopify/upload-to-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/release/aaml
-        asset_name: windows-cpu-aaml
-        asset_content_type: application/octet-stream
+        name: windows-cpu-aaml
+        path: ./target/release/aaml
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        content-type: application/octet-stream
