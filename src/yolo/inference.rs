@@ -67,10 +67,6 @@ impl Inference {
         };
         let device = if cfg!(feature = "cuda") { Device::new_cuda(0)? } else { Device::Cpu };
 
-        // 检查 cuda 是否工作
-        #[cfg(feature = "cuda")]
-        info!("cuda 状态: {}", candle_core::utils::cuda_is_available());
-
         let vb = unsafe { VarBuilder::from_mmaped_safetensors(&[model_file], DType::F32, &device)? };
         let model = YoloV8::load(vb, multiples, num_classes)?;
         Ok(Self {
