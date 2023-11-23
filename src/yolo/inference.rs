@@ -127,7 +127,8 @@ impl Inference {
 
         let image_t = (image_t.unsqueeze(0)?.to_dtype(DType::F32)? * (1.0 / 255.0))?;
         let predictions = self.model.forward(&image_t)?.squeeze(0)?;
-
+        // 由于迭代是在cpu上进行的，因此处理之前把数据复制到 cpu
+        let predictions = predictions.to_device(&Device::Cpu)?;
         //后处理
         let (pred_size, npreds) = predictions.dims2()?;
         let nclasses = pred_size - 4;
