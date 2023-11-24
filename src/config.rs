@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Settings {
-    pub cvat_host: String,
+    // pub cvat_host: String,
     pub yolo: YoloConf,
 }
 

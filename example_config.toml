@@ -1,4 +1,3 @@
-cvat_host = "http://127.0.0.1:8080"
 [yolo]
 model_path = "yolov8m.safetensors"
 weight_size = "m"
