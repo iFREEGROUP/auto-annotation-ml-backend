@@ -50,7 +50,6 @@ impl Settings {
     pub fn new(config_file: Option<String>) -> Result<Self, ConfigError> {
         let config_builder = Config::builder()
             .add_source(MemorySource::new())
-            .add_source(config::File::with_name("aaml"))
             .add_source(config::Environment::with_prefix("APP"));
 
         if let Some(config_file) = config_file {
